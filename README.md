@@ -1,4 +1,4 @@
-# go-logX - High-Performance Structured Logging Package
+# go-logx - High-Performance Structured Logging Package
 
 go-logX is a highly concurrent, memory-efficient, and production-grade logging package built on top of Uber's Zap library. It provides structured JSON logging with automatic sensitive data masking, zero-allocation patterns, and robust concurrency safety.
 
