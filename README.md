@@ -453,6 +453,10 @@ The library is ready for production use with excellent test coverage and proven 
 5. Run the test suite
 6. Submit a pull request
 
+## Contributors
+
+1. [SeaSBee](https://www.seasbee.com) [Linkedin](https://www.linkedin.com/company/seasbee) [Substack](https://arvindgupta03.substack.com)
+
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
