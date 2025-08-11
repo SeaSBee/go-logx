@@ -1,8 +1,8 @@
 module examples
 
-go 1.21
+go 1.24.5
 
-replace go-logx => ../logx
+replace go-logx => ../
 
 require go-logx v0.0.0-00010101000000-000000000000
 
