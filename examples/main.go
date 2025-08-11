@@ -2,9 +2,10 @@ package main
 
 import (
 	"errors"
-	logx "go-logx"
 	"sync"
 	"time"
+
+	logx "github.com/seasbee/go-logx"
 )
 
 func main() {

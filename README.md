@@ -35,7 +35,7 @@ go get go-logx
 ```go
 package main
 
-import logx "go-logx"
+import logx "github.com/seasbee/go-logx"
 
 func main() {
     // Initialize with default configuration

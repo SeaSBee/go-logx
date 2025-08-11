@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	logx "go-logx"
+	logx "github.com/seasbee/go-logx"
 )
 
 func TestLevelString(t *testing.T) {

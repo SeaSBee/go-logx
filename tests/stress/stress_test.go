@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	logx "go-logx"
+	logx "github.com/seasbee/go-logx"
 )
 
 // safeDivision safely divides a by b, returning 0 if b is 0
