@@ -24,8 +24,22 @@ go-logX is a highly concurrent, memory-efficient, and production-grade logging p
 
 ## Installation
 
+### Latest Version (v1.0.0)
+
 ```bash
-go get go-logx
+go get github.com/seasbee/go-logx@v1.0.0
+```
+
+### Latest Development Version
+
+```bash
+go get github.com/seasbee/go-logx@latest
+```
+
+### Using in go.mod
+
+```go
+require github.com/seasbee/go-logx v1.0.0
 ```
 
 ## Quick Start
@@ -35,83 +49,258 @@ go get go-logx
 ```go
 package main
 
-import logx "github.com/seasbee/go-logx"
+import (
+    "errors"
+    "time"
+    
+    logx "github.com/seasbee/go-logx"
+)
 
 func main() {
     // Initialize with default configuration
     logx.InitDefault()
     
-    // Log messages
+    // Basic logging
     logx.Info("Application started")
     logx.Debug("Debug information", logx.String("component", "main"))
     logx.Warn("Warning message", logx.Int("warning_code", 1001))
     logx.Error("Error occurred", logx.String("error_type", "validation"))
+    
+    // Formatted logging
+    logx.Infof("Processing request %s with ID %d", "GET", 12345)
+    logx.Debugf("User %s logged in from %s", "john.doe", "192.168.1.100")
+    
+    // Error logging with context
+    err := errors.New("database connection failed")
+    logx.Error("Database operation failed",
+        logx.ErrorField(err),
+        logx.String("operation", "user_lookup"),
+        logx.Int("retry_count", 3),
+    )
+    
+    // Structured logging with multiple fields
+    logx.Info("User action completed",
+        logx.String("user_id", "user123"),
+        logx.String("action", "profile_update"),
+        logx.Int("duration_ms", 150),
+        logx.Bool("success", true),
+        logx.String("ip_address", "192.168.1.1"),
+    )
+    
+    // Sync before exit
+    defer logx.Sync()
 }
 ```
 
 ### Custom Configuration
 
 ```go
-config := &logx.Config{
-    Level:       logx.DebugLevel,
-    Development: true,
-    AddCaller:   true,
-    AddStacktrace: true,
-}
+package main
 
-logger, err := logx.New(config)
-if err != nil {
-    logx.Fatal("Failed to create logger", logx.ErrorField(err))
+import logx "github.com/seasbee/go-logx"
+
+func main() {
+    // Create custom configuration
+    config := &logx.Config{
+        Level:         logx.DebugLevel,
+        Development:   true,
+        AddCaller:     true,
+        AddStacktrace: true,
+        OutputPath:    "logs/app.log", // Optional: log to file
+    }
+    
+    // Initialize with custom configuration
+    err := logx.Init(config)
+    if err != nil {
+        logx.Fatal("Failed to initialize logger", logx.ErrorField(err))
+    }
+    
+    // Create a new logger instance
+    logger, err := logx.NewLogger(config)
+    if err != nil {
+        logx.Fatal("Failed to create logger", logx.ErrorField(err))
+    }
+    
+    // Use the logger
+    logger.Info("Custom logger initialized")
+    logger.Debug("Debug mode enabled", logx.String("config", "development"))
+    
+    defer logx.Sync()
 }
 ```
 
 ### Structured Logging
 
 ```go
-logx.Info("User action",
-    logx.String("action", "login"),
-    logx.String("user_id", "user123"),
-    logx.String("ip_address", "192.168.1.1"),
-    logx.Int("response_time_ms", 150),
-    logx.Bool("success", true),
+package main
+
+import (
+    "time"
+    logx "github.com/seasbee/go-logx"
 )
+
+func main() {
+    logx.InitDefault()
+    
+    // Basic structured logging
+    logx.Info("User action",
+        logx.String("action", "login"),
+        logx.String("user_id", "user123"),
+        logx.String("ip_address", "192.168.1.1"),
+        logx.Int("response_time_ms", 150),
+        logx.Bool("success", true),
+    )
+    
+    // Complex structured logging with different field types
+    logx.Info("API request processed",
+        logx.String("method", "POST"),
+        logx.String("endpoint", "/api/users"),
+        logx.String("user_agent", "Mozilla/5.0..."),
+        logx.Int("status_code", 201),
+        logx.Int64("request_id", 1234567890123456789),
+        logx.Float64("response_time", 0.045),
+        logx.Bool("cached", false),
+        logx.String("client_ip", "203.0.113.1"),
+    )
+    
+    // Logging with timestamps and durations
+    start := time.Now()
+    // ... perform some operation ...
+    duration := time.Since(start)
+    
+    logx.Info("Operation completed",
+        logx.String("operation", "data_processing"),
+        logx.Float64("duration_seconds", duration.Seconds()),
+        logx.Int("records_processed", 1000),
+        logx.Bool("success", true),
+    )
+    
+    defer logx.Sync()
+}
 ```
 
 ### Sensitive Data Masking
 
-LogX automatically masks sensitive data for keys like `password`, `token`, `email`, `ssn`, etc.
+go-logx automatically masks sensitive data for keys like `password`, `token`, `email`, `ssn`, etc.
 
 ```go
-logx.Info("User login attempt",
-    logx.String("username", "john.doe"),
-    logx.String("password", "secretpassword123"), // Masked as "se***23"
-    logx.String("email", "john.doe@example.com"), // Masked as "jo***om"
-    logx.String("token", "jwt_token_here"),       // Masked as "jw***re"
-    logx.String("normal_field", "visible_value"), // Not masked
-)
-```
+package main
 
-### Custom Sensitive Keys
+import logx "github.com/seasbee/go-logx"
 
-```go
-// Add custom sensitive keys
-logx.AddSensitiveKey("custom_secret")
-logx.AddSensitiveKey("api_secret")
-
-// Remove sensitive keys
-logx.RemoveSensitiveKey("email")
+func main() {
+    logx.InitDefault()
+    
+    // Automatic sensitive data masking
+    logx.Info("User login attempt",
+        logx.String("username", "john.doe"),
+        logx.String("password", "secretpassword123"), // Masked as "se***23"
+        logx.String("email", "john.doe@example.com"), // Masked as "jo***om"
+        logx.String("token", "jwt_token_here"),       // Masked as "jw***re"
+        logx.String("ssn", "123-45-6789"),           // Masked as "12***89"
+        logx.String("credit_card", "4111111111111111"), // Masked as "41***11"
+        logx.String("normal_field", "visible_value"), // Not masked
+    )
+    
+    // Custom sensitive keys
+    logx.AddSensitiveKey("custom_secret")
+    logx.AddSensitiveKey("api_secret")
+    logx.AddSensitiveKey("internal_token")
+    
+    logx.Info("API call with custom sensitive data",
+        logx.String("custom_secret", "very_secret_value"), // Masked as "ve***ue"
+        logx.String("api_secret", "api_key_12345"),       // Masked as "ap***45"
+        logx.String("public_data", "this_is_visible"),    // Not masked
+    )
+    
+    // Remove sensitive keys if needed
+    logx.RemoveSensitiveKey("email")
+    
+    defer logx.Sync()
+}
 ```
 
 ### Logger with Context
 
 ```go
-userLogger := logx.With(
-    logx.String("user_id", "user456"),
-    logx.String("session_id", "sess_789"),
-    logx.String("request_id", "req_123"),
+package main
+
+import logx "github.com/seasbee/go-logx"
+
+func main() {
+    logx.InitDefault()
+    
+    // Create a logger with persistent context
+    userLogger := logx.With(
+        logx.String("user_id", "user456"),
+        logx.String("session_id", "sess_789"),
+        logx.String("request_id", "req_123"),
+    )
+    
+    // All subsequent logs will include the context
+    userLogger.Info("User performed action", logx.String("action", "update_profile"))
+    userLogger.Debug("Debug information", logx.String("component", "profile_service"))
+    userLogger.Error("Error occurred", logx.String("error_type", "validation"))
+    
+    // Create another logger with different context
+    apiLogger := logx.With(
+        logx.String("service", "payment_api"),
+        logx.String("version", "v2.1"),
+        logx.String("environment", "production"),
+    )
+    
+    apiLogger.Info("Payment processed", 
+        logx.String("payment_id", "pay_12345"),
+        logx.Float64("amount", 99.99),
+        logx.String("currency", "USD"),
+    )
+    
+    defer logx.Sync()
+}
+```
+
+### Error Logging
+
+```go
+package main
+
+import (
+    "errors"
+    "fmt"
+    logx "github.com/seasbee/go-logx"
 )
 
-userLogger.Info("User performed action", logx.String("action", "update_profile"))
+func main() {
+    logx.InitDefault()
+    
+    // Basic error logging
+    err := errors.New("database connection failed")
+    logx.Error("Database operation failed",
+        logx.ErrorField(err),
+        logx.String("operation", "user_lookup"),
+        logx.Int("retry_count", 3),
+    )
+    
+    // Error with formatted message
+    logx.Errorf("Failed to process request %s: %v", "GET /api/users", err)
+    
+    // Error with stack trace (when AddStacktrace is enabled)
+    logx.Error("Critical error occurred",
+        logx.ErrorField(err),
+        logx.String("component", "payment_service"),
+        logx.String("user_id", "user123"),
+    )
+    
+    // Fatal error (causes program exit)
+    if err != nil {
+        logx.Fatal("Application cannot continue",
+            logx.ErrorField(err),
+            logx.String("reason", "critical_dependency_failed"),
+        )
+    }
+    
+    defer logx.Sync()
+}
 ```
 
 ### Error Logging
@@ -190,22 +379,114 @@ LogX is designed for high-concurrency environments:
 - High throughput under concurrent load
 - Minimal CPU overhead
 
+## Version Compatibility
+
+### Go Version Support
+- **Minimum Go Version**: 1.24.5
+- **Recommended Go Version**: 1.24.5 or later
+- **Module Path**: `github.com/seasbee/go-logx`
+
+### Version History
+- **v1.0.0**: Initial stable release with comprehensive logging features
+
+### Breaking Changes
+- No breaking changes in v1.0.0
+
 ## Testing
+
+### Run All Tests
+```bash
+# Run all tests in the project
+go test ./...
+
+# Run tests with race detection
+go test -race ./...
+
+# Run tests with coverage
+go test -cover ./...
+```
 
 ### Unit Tests
 ```bash
-go test ./logx
+cd tests/unit
+go test -v
 ```
 
 ### Integration Tests
 ```bash
-go test -tags=integration ./logx
+cd tests/integration
+go test -v
+```
+
+### Stress Tests
+```bash
+cd tests/stress
+go test -v -timeout=30m
 ```
 
 ### Benchmarks
 ```bash
-go test -bench=. ./logx
+# Run benchmarks
+go test -bench=. ./...
+
+# Run benchmarks with memory profiling
+go test -bench=. -benchmem ./...
 ```
+
+## API Reference
+
+### Package-Level Functions
+
+#### Initialization
+- `Init(config *Config) error` - Initialize with custom configuration
+- `InitDefault()` - Initialize with default configuration
+- `NewLogger(config *Config) (*Logger, error)` - Create new logger instance
+
+#### Logging Functions
+- `Trace(msg string, fields ...Field)` - Log trace message
+- `Tracef(format string, args ...interface{})` - Log formatted trace message
+- `Debug(msg string, fields ...Field)` - Log debug message
+- `Debugf(format string, args ...interface{})` - Log formatted debug message
+- `Info(msg string, fields ...Field)` - Log info message
+- `Infof(format string, args ...interface{})` - Log formatted info message
+- `Warn(msg string, fields ...Field)` - Log warning message
+- `Warnf(format string, args ...interface{})` - Log formatted warning message
+- `Error(msg string, fields ...Field)` - Log error message
+- `Errorf(format string, args ...interface{})` - Log formatted error message
+- `Fatal(msg string, fields ...Field)` - Log fatal message and exit
+- `Fatalf(format string, args ...interface{})` - Log formatted fatal message and exit
+- `With(fields ...Field) *Logger` - Create logger with context
+- `Sync()` - Flush buffered logs
+
+#### Sensitive Data Management
+- `AddSensitiveKey(key string)` - Add custom sensitive key
+- `RemoveSensitiveKey(key string)` - Remove sensitive key
+
+### Field Creation Functions
+- `String(key, value string) Field` - Create string field
+- `Int(key string, value int) Field` - Create integer field
+- `Int64(key string, value int64) Field` - Create 64-bit integer field
+- `Float64(key string, value float64) Field` - Create 64-bit float field
+- `Bool(key string, value bool) Field` - Create boolean field
+- `Any(key string, value interface{}) Field` - Create any type field
+- `ErrorField(err error) Field` - Create error field
+
+### Logger Methods
+The `Logger` struct provides the same methods as package-level functions:
+- `Trace(msg string, fields ...Field)`
+- `Tracef(format string, args ...interface{})`
+- `Debug(msg string, fields ...Field)`
+- `Debugf(format string, args ...interface{})`
+- `Info(msg string, fields ...Field)`
+- `Infof(format string, args ...interface{})`
+- `Warn(msg string, fields ...Field)`
+- `Warnf(format string, args ...interface{})`
+- `Error(msg string, fields ...Field)`
+- `Errorf(format string, args ...interface{})`
+- `Fatal(msg string, fields ...Field)`
+- `Fatalf(format string, args ...interface{})`
+- `With(fields ...Field) *Logger`
+- `Sync()`
 
 ## Examples
 
@@ -218,6 +499,14 @@ See the `examples/` directory for comprehensive usage examples:
 - Error handling
 - Concurrent logging
 - Performance logging
+
+### Quick Examples
+
+```bash
+# Run the example application
+cd examples
+go run main.go
+```
 
 ## Production Usage
 
