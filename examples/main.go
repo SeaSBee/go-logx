@@ -5,7 +5,7 @@ import (
 	"sync"
 	"time"
 
-	logx "github.com/seasbee/go-logx"
+	logx "github.com/SeaSBee/go-logx"
 )
 
 func main() {

@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	logx "github.com/seasbee/go-logx"
+	logx "github.com/SeaSBee/go-logx"
 )
 
 // TestMemoryProfiling runs a focused memory profiling test
