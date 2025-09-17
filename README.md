@@ -27,19 +27,19 @@ go-logX is a highly concurrent, memory-efficient, and production-grade logging p
 ### Latest Version (v1.0.0)
 
 ```bash
-go get github.com/SeaSBee/go-logx@v1.0.0
+go get github.com/seasbee/go-logx@v1.0.0
 ```
 
 ### Latest Development Version
 
 ```bash
-go get github.com/SeaSBee/go-logx@latest
+go get github.com/seasbee/go-logx@latest
 ```
 
 ### Using in go.mod
 
 ```go
-require github.com/SeaSBee/go-logx v1.0.0
+require github.com/seasbee/go-logx v1.0.0
 ```
 
 ## Quick Start
@@ -53,7 +53,7 @@ import (
     "errors"
     "time"
     
-    logx "github.com/SeaSBee/go-logx"
+    logx "github.com/seasbee/go-logx"
 )
 
 func main() {
@@ -97,7 +97,7 @@ func main() {
 ```go
 package main
 
-import logx "github.com/SeaSBee/go-logx"
+import logx "github.com/seasbee/go-logx"
 
 func main() {
     // Create custom configuration
@@ -136,7 +136,7 @@ package main
 
 import (
     "time"
-    logx "github.com/SeaSBee/go-logx"
+    logx "github.com/seasbee/go-logx"
 )
 
 func main() {
@@ -186,7 +186,7 @@ go-logx automatically masks sensitive data for keys like `password`, `token`, `e
 ```go
 package main
 
-import logx "github.com/SeaSBee/go-logx"
+import logx "github.com/seasbee/go-logx"
 
 func main() {
     logx.InitDefault()
@@ -225,7 +225,7 @@ func main() {
 ```go
 package main
 
-import logx "github.com/SeaSBee/go-logx"
+import logx "github.com/seasbee/go-logx"
 
 func main() {
     logx.InitDefault()
@@ -267,7 +267,7 @@ package main
 import (
     "errors"
     "fmt"
-    logx "github.com/SeaSBee/go-logx"
+    logx "github.com/seasbee/go-logx"
 )
 
 func main() {
@@ -384,7 +384,7 @@ LogX is designed for high-concurrency environments:
 ### Go Version Support
 - **Minimum Go Version**: 1.24.5
 - **Recommended Go Version**: 1.24.5 or later
-- **Module Path**: `github.com/SeaSBee/go-logx`
+- **Module Path**: `github.com/seasbee/go-logx`
 
 ### Version History
 - **v1.0.0**: Initial stable release with comprehensive logging features

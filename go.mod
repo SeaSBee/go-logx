@@ -1,4 +1,4 @@
-module github.com/SeaSBee/go-logx
+module github.com/seasbee/go-logx
 
 go 1.24.5
 

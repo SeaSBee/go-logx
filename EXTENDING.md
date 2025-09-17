@@ -26,7 +26,7 @@ package myapp
 
 import (
     "time"
-    "github.com/SeaSBee/go-logx"
+    "github.com/seasbee/go-logx"
 )
 
 // Custom field for time.Duration
@@ -130,7 +130,7 @@ package myapp
 
 import (
     "regexp"
-    "github.com/SeaSBee/go-logx"
+    "github.com/seasbee/go-logx"
 )
 
 // Custom sensitive key patterns

@@ -15,7 +15,7 @@
 
 ### Installation
 ```bash
-go get github.com/SeaSBee/go-logx
+go get github.com/seasbee/go-logx
 ```
 
 ### Basic Setup
@@ -23,7 +23,7 @@ go get github.com/SeaSBee/go-logx
 package main
 
 import (
-    "github.com/SeaSBee/go-logx"
+    "github.com/seasbee/go-logx"
 )
 
 func main() {

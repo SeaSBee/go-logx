@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	logx "github.com/SeaSBee/go-logx"
+	logx "github.com/seasbee/go-logx"
 )
 
 func TestHighConcurrencyLogging(t *testing.T) {
